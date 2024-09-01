@@ -7,8 +7,12 @@ import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigBuilder;
+import org.springframework.statemachine.config.builders.StateMachineConfigurationConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
+import org.springframework.statemachine.listener.StateMachineListener;
+import org.springframework.statemachine.listener.StateMachineListenerAdapter;
+import org.springframework.statemachine.transition.Transition;
 import tech.silva.orderSsm.entity.OrderEvents;
 import tech.silva.orderSsm.entity.OrderStates;
 
@@ -52,6 +56,23 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderS
     private Action<OrderStates, OrderEvents> shipOrderAction() {
         return context -> {
             System.out.println("Shipping order");
+        };
+    }
+
+    @Override
+    public void configure(StateMachineConfigurationConfigurer<OrderStates, OrderEvents> config) throws Exception {
+        config
+                .withConfiguration().listener(stateMachineListerner());
+    }
+
+    @Bean
+    private StateMachineListener<OrderStates, OrderEvents> stateMachineListerner() {
+        return new StateMachineListenerAdapter<>(){
+            @Override
+            public void transition(Transition<OrderStates, OrderEvents> transition) {
+                System.out.println("Transtioning from " + transition.getSource().getId()
+                + " to " + transition.getTarget().getId());
+            }
         };
     }
 
