@@ -52,13 +52,6 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderS
                 .withExternal().source(OrderStates.PAID).target(OrderStates.CANCELLED).event(OrderEvents.CANCEL);
     }
 
-    @Bean
-    private Action<OrderStates, OrderEvents> shipOrderAction() {
-        return context -> {
-            System.out.println("Shipping order");
-        };
-    }
-
     @Override
     public void configure(StateMachineConfigurationConfigurer<OrderStates, OrderEvents> config) throws Exception {
         config
@@ -66,25 +59,35 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderS
     }
 
     @Bean
-    private StateMachineListener<OrderStates, OrderEvents> stateMachineListerner() {
+    StateMachineListener<OrderStates, OrderEvents> stateMachineListerner() {
         return new StateMachineListenerAdapter<>(){
             @Override
             public void transition(Transition<OrderStates, OrderEvents> transition) {
-                System.out.println("Transtioning from " + transition.getSource().getId()
-                + " to " + transition.getTarget().getId());
+                if (transition.getTarget().getId() != null ){
+                    System.out.println("Transtioning from " +
+                            (transition.getSource().getId() != null ? transition.getSource().getId() : "none")
+                        + " to " + transition.getTarget().getId());
+                }
             }
         };
     }
 
     @Bean
-    private Action<OrderStates, OrderEvents> payOrderAction() {
+    Action<OrderStates, OrderEvents> shipOrderAction() {
+        return context -> {
+            System.out.println("Shipping order");
+        };
+    }
+
+    @Bean
+    Action<OrderStates, OrderEvents> payOrderAction() {
         return context -> {
             System.out.println("Paying order");
         };
     }
 
     @Bean
-    private Action<OrderStates, OrderEvents> validateOrderAction() {
+    Action<OrderStates, OrderEvents> validateOrderAction() {
         return context -> {
             System.out.println("Validating order");
         };
