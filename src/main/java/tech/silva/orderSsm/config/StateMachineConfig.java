@@ -1,6 +1,9 @@
 package tech.silva.orderSsm.config;
 
+import jdk.jfr.Name;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.statemachine.action.Action;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.EnumStateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineConfigBuilder;
@@ -30,15 +33,39 @@ public class StateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderS
     public void configure(StateMachineTransitionConfigurer<OrderStates, OrderEvents> transitions) throws Exception {
         transitions
                 .withExternal().source(OrderStates.NEW).target(OrderStates.VALIDATED).event(OrderEvents.VALIDATE)
+                .action(validateOrderAction())
                 .and()
                 .withExternal().source(OrderStates.VALIDATED).target(OrderStates.PAID).event(OrderEvents.PAY)
+                .action(payOrderAction())
                 .and()
                 .withExternal().source(OrderStates.PAID).target(OrderStates.SHIPPED).event(OrderEvents.SHIP)
+                .action(shipOrderAction())
                 .and()
                 .withExternal().source(OrderStates.SHIPPED).target(OrderStates.COMPLETED).event(OrderEvents.COMPLETE)
                 .and()
-                .withExternal().source(OrderStates.SHIPPED).target(OrderStates.CANCELLED).event(OrderEvents.CANCEL)
+                .withExternal().source(OrderStates.VALIDATED).target(OrderStates.CANCELLED).event(OrderEvents.CANCEL)
                 .and()
-                .withExternal().source(OrderStates.SHIPPED).target(OrderStates.CANCELLED).event(OrderEvents.CANCEL);
+                .withExternal().source(OrderStates.PAID).target(OrderStates.CANCELLED).event(OrderEvents.CANCEL);
+    }
+
+    @Bean
+    private Action<OrderStates, OrderEvents> shipOrderAction() {
+        return context -> {
+            System.out.println("Shipping order");
+        };
+    }
+
+    @Bean
+    private Action<OrderStates, OrderEvents> payOrderAction() {
+        return context -> {
+            System.out.println("Paying order");
+        };
+    }
+
+    @Bean
+    private Action<OrderStates, OrderEvents> validateOrderAction() {
+        return context -> {
+            System.out.println("Validating order");
+        };
     }
 }
