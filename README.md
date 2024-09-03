@@ -41,15 +41,8 @@ Para executar os exemplos deste repositório, você precisará ter instalado:
    ```bash
    git clone https://github.com/seu-usuario/nome-do-repositorio.git
    cd nome-do-repositorio
-## 2. Compile e Execute a Aplicação
 
-Para compilar e executar a aplicação, utilize os seguintes comandos:
-
-```bash
-mvn clean install
-mvn spring-boot:run
-## Exemplos Incluídos
-
+## Exemplos incluídos
 1. **Máquina de Estados Básica**: Um exemplo simples para ilustrar o funcionamento básico da Spring State Machine.
 
 2. **Fluxo de Pedido**: Implementação de uma máquina de estados para gerenciar o ciclo de vida de um pedido, com estados como Criado, Processando, Enviado e Entregue.
